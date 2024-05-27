@@ -101,8 +101,6 @@ namespace HMC5883L
         void waitForDataReady(); // Blocks until data is ready
         XYZ_Data readData();
 
-        // void outputMotionCalData(XYZ_Data& accel_data, XYZ_Data& gyro_data);
-
         void setGain(hm5883lGain_t gain);
         void setMode(hm5883lOperatingMode_t mode, bool highSpeed);
         void setDataRate(hmc5883lDataRate_t rate);

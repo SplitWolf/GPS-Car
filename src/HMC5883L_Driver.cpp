@@ -82,31 +82,6 @@ namespace HMC5883L {
         return XYZ_Data { x, y, z };
     }
 
-    // void Driver::outputMotionCalData(XYZ_Data &accel_data, XYZ_Data &gyro_data)
-    // {
-    //     XYZ_Data mag_data = readData();
-    //     Serial.print("Raw:");
-    //     Serial.print(accel_data.x);
-    //     Serial.print(',');
-    //     Serial.print(accel_data.y);
-    //     Serial.print(',');
-    //     Serial.print(accel_data.z);
-    //     Serial.print(',');
-    //     Serial.print(gyro_data.x);
-    //     Serial.print(',');
-    //     Serial.print(gyro_data.y);
-    //     Serial.print(',');
-    //     Serial.print(gyro_data.z);
-    //     Serial.print(',');
-    //     Serial.print(mag_data.x);
-    //     Serial.print(',');
-    //     Serial.print(mag_data.y);
-    //     Serial.print(',');
-    //     Serial.print(mag_data.z);
-    //     Serial.println();
-    //     // Serial.printf("Raw:%d,%d,%d,%d,%d,%d,%d,%d,%d\n",accel_data.x,accel_data.y,accel_data.z,gyro_data.x,gyro_data.y,gyro_data.z,mag_data.x,mag_data.y,mag_data.z);
-    // }
-
     void Driver::selfTest()
     {
         //TODO: Update to acutally report test results
