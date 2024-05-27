@@ -103,7 +103,6 @@ namespace HMC5883L
         void setDataRate(hmc5883lDataRate_t rate);
         void setSamples(hmc5883lSamplesAveraged_t samples);
 
-        //
         void selfTest();
 
     private:

@@ -21,16 +21,11 @@ void setup() {
 
 
 void loop() {
-  // driver.waitForDataReady();
-  // HMC5883L::XYZ_Data data = driver.readData();
-  // Serial.printf("X: %d Y: %d Z: %d \n",data.x,data.y,data.z);
+  driver.waitForDataReady();
+  HMC5883L::XYZ_Data data = driver.readData();
+  Serial.printf("X: %d Y: %d Z: %d \n",data.x,data.y,data.z);
 
-  // float heading = atan2f(data.y,data.x) * 180/PI +180;
-  // Serial.printf("Heading: %f deg \n", heading);
-  // delay(2000);
-
-  HMC5883L::XYZ_Data accel_data = { 0, 0, 0};
-  HMC5883L::XYZ_Data gyro_data = { 0, 0, 0};
-  driver.outputMotionCalData(accel_data, gyro_data);
-  
+  float heading = atan2f(data.y,data.x) * 180/PI +180;
+  Serial.printf("Heading: %f deg \n", heading);
+  delay(2000);  
 }
