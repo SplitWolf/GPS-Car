@@ -76,9 +76,6 @@ namespace HMC5883L
 
     #pragma endregion CONSTANTS
 
-    //TODO: Parse this with bool function
-    #define HMC5883L_HIGH_SPEED_I2C = 0x1 << 7
-
     struct XYZ_Data
     {
         int16_t x;
