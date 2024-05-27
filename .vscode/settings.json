@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "*.psql": "sql",
+        "array": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "cmath": "cpp"
+    },
+    "cmake.configureOnOpen": false,
+    "C_Cpp.errorSquiggles": "disabled"
+}
