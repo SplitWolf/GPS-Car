@@ -89,7 +89,6 @@ void HMC5883L::selfTest()
     //TODO: Maybe store previous settings?
     setGain(hm5883lGain_t::HMC5883L_GAIN_4_7);
     setMode(hm5883lOperatingMode_t::HMC5883L_MODE_CONTINOUS, false);
-
     waitForDataReady();
 
     HMC5883L_Data data = this->readData();
