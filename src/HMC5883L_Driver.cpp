@@ -36,18 +36,14 @@ void HMC5883L::setMode(hm5883lOperatingMode_t mode, bool highSpeed)
 
 void HMC5883L::setDataRate(hmc5883lDataRate_t rate)
 {
-    uint8_t currentConfig = readDeivce(hm5883lRegisters_t::HMC5883L_REGISTER_CRA);
-    uint8_t DR_MASK = 0x7 << 2;
-    uint8_t newConfig = (currentConfig & ~DR_MASK) |  rate;
-    writeDevice(hm5883lRegisters_t::HMC5883L_REGISTER_CRA, newConfig);
+    m_configA.dateRate = rate;
+    writeConfigA();
 }
 
 void HMC5883L::setSamples(hmc5883lSamplesAveraged_t samples)
 {
-    uint8_t currentConfig = readDeivce(hm5883lRegisters_t::HMC5883L_REGISTER_CRA);
-    uint8_t SMP_MASK = 0x3 << 5;
-    uint8_t newConfig = (currentConfig & ~SMP_MASK) |  samples;
-    writeDevice(hm5883lRegisters_t::HMC5883L_REGISTER_CRA, newConfig);
+    m_configA.samples = samples;
+    writeConfigA();
 }
 
 bool HMC5883L::isDataReady() {
@@ -83,22 +79,29 @@ HMC5883L_Data HMC5883L::readData() {
 void HMC5883L::selfTest()
 {
     //TODO: Update to acutally report test results
-    writeDevice(hm5883lRegisters_t::HMC5883L_REGISTER_CRA, HMC5883L_SAMPLES_AVGD_8 | HMC5883L_DATE_RATE_15_Hz | HMC5883L_MODE_POS_BAIS);
-    writeDevice(hm5883lRegisters_t::HMC5883L_REGISTER_CRB, hm5883lGain_t::HMC5883L_GAIN_4_7);
+    hm5883lConfigA prev_config = m_configA;
 
-    writeDevice(hm5883lRegisters_t::HMC5883L_REGISTER_MR, hm5883lOperatingMode_t::HMC5883L_MODE_CONTINOUS);
+    m_configA.samples = hmc5883lSamplesAveraged_t::HMC5883L_SAMPLES_AVGD_8;
+    m_configA.dateRate = hmc5883lDataRate_t::HMC5883L_DATE_RATE_15_Hz;
+    m_configA.mode = hmc5883lMeasurementMode_t::HMC5883L_MODE_POS_BAIS;    
+
+    writeConfigA();
+    //TODO: Maybe store previous settings?
+    setGain(hm5883lGain_t::HMC5883L_GAIN_4_7);
+    setMode(hm5883lOperatingMode_t::HMC5883L_MODE_CONTINOUS);
 
     waitForDataReady();
 
     HMC5883L_Data data = this->readData();
+
+    m_configA = prev_config;
+    writeConfigA();
 }
 
 void HMC5883L::setMeasurmentMode(hmc5883lMeasurementMode_t mode)
 {
-    uint8_t currentConfig = readDeivce(hm5883lRegisters_t::HMC5883L_REGISTER_CRA);
-    uint8_t MEA_MASK = 0x3;
-    uint8_t newConfig = (currentConfig & ~MEA_MASK) |  mode;
-    writeDevice(hm5883lRegisters_t::HMC5883L_REGISTER_CRA, newConfig);
+    m_configA.mode = mode;
+    writeConfigA();
 }
 
 void HMC5883L::writeDefaultConfig()
