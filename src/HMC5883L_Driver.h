@@ -74,17 +74,17 @@ struct hm5883lConfigA {
 
 #pragma endregion CONSTANTS
 
-struct XYZ_Data
+struct HMC5883L_Data
 {
     int16_t x;
     int16_t y;
     int16_t z;
 };
 
-class Driver
+class HMC5883L
 {        
 public:
-    Driver(uint8_t sCL_PIN, uint8_t sDA_PIN);
+    HMC5883L(uint8_t sCL_PIN, uint8_t sDA_PIN);
     // TODO: Do I need the destructor?
     // ~Driver();
 
@@ -94,7 +94,7 @@ public:
 
     bool isDataReady();
     void waitForDataReady(); // Blocks until data is ready
-    XYZ_Data readData();
+    HMC5883L_Data readData();
 
     void setGain(hm5883lGain_t gain);
     void setMode(hm5883lOperatingMode_t mode, bool highSpeed);

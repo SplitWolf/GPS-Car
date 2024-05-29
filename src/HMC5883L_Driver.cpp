@@ -1,7 +1,7 @@
 #include "HMC5883L_Driver.h"
 #include "Wire.h"
 
-Driver::Driver(uint8_t sCL_PIN, uint8_t sDA_PIN)
+HMC5883L::HMC5883L(uint8_t sCL_PIN, uint8_t sDA_PIN)
 {
     m_sCL_PIN = sCL_PIN;
     m_sDA_PIN = sDA_PIN;
@@ -13,7 +13,7 @@ Driver::Driver(uint8_t sCL_PIN, uint8_t sDA_PIN)
     };
 }
 
-bool Driver::begin() {
+bool HMC5883L::begin() {
     Wire.setSCL(m_sCL_PIN);
     Wire.setSDA(m_sDA_PIN);
     Wire.begin();
@@ -23,18 +23,18 @@ bool Driver::begin() {
     return true;
 }
 
-void Driver::setGain(hm5883lGain_t gain)
+void HMC5883L::setGain(hm5883lGain_t gain)
 {
     writeDevice(hm5883lRegisters_t::HMC5883L_REGISTER_CRB, gain);
 }
 
-void Driver::setMode(hm5883lOperatingMode_t mode, bool highSpeed)
+void HMC5883L::setMode(hm5883lOperatingMode_t mode, bool highSpeed)
 {
     uint8_t highSpeedValue = highSpeed << 7;
     writeDevice(hm5883lRegisters_t::HMC5883L_REGISTER_MR, mode | highSpeedValue);
 }
 
-void Driver::setDataRate(hmc5883lDataRate_t rate)
+void HMC5883L::setDataRate(hmc5883lDataRate_t rate)
 {
     uint8_t currentConfig = readDeivce(hm5883lRegisters_t::HMC5883L_REGISTER_CRA);
     uint8_t DR_MASK = 0x7 << 2;
@@ -42,7 +42,7 @@ void Driver::setDataRate(hmc5883lDataRate_t rate)
     writeDevice(hm5883lRegisters_t::HMC5883L_REGISTER_CRA, newConfig);
 }
 
-void Driver::setSamples(hmc5883lSamplesAveraged_t samples)
+void HMC5883L::setSamples(hmc5883lSamplesAveraged_t samples)
 {
     uint8_t currentConfig = readDeivce(hm5883lRegisters_t::HMC5883L_REGISTER_CRA);
     uint8_t SMP_MASK = 0x3 << 5;
@@ -50,12 +50,12 @@ void Driver::setSamples(hmc5883lSamplesAveraged_t samples)
     writeDevice(hm5883lRegisters_t::HMC5883L_REGISTER_CRA, newConfig);
 }
 
-bool Driver::isDataReady() {
+bool HMC5883L::isDataReady() {
     int rdy = readDeivce(hm5883lRegisters_t::HMC5883L_REGISTER_STR);
     return (rdy & 0x1) == 1;
 }
 
-void Driver::waitForDataReady() {
+void HMC5883L::waitForDataReady() {
     while(true) {
         if(isDataReady()) {
             break;
@@ -64,7 +64,7 @@ void Driver::waitForDataReady() {
     }
 }
 
-XYZ_Data Driver::readData() {
+HMC5883L_Data HMC5883L::readData() {
     int16_t x = 0, y = 0, z = 0;
     writeDevice(hm5883lRegisters_t::HMC5883L_REGISTER_OUT_X_H,-1);
     Wire.requestFrom(HMC5883L_DEVICE_ADDRESS, 6);
@@ -77,10 +77,10 @@ XYZ_Data Driver::readData() {
         y |= Wire.read();      //Y lsb
     }
 
-    return XYZ_Data { x, y, z };
+    return HMC5883L_Data { x, y, z };
 }
 
-void Driver::selfTest()
+void HMC5883L::selfTest()
 {
     //TODO: Update to acutally report test results
     writeDevice(hm5883lRegisters_t::HMC5883L_REGISTER_CRA, HMC5883L_SAMPLES_AVGD_8 | HMC5883L_DATE_RATE_15_Hz | HMC5883L_MODE_POS_BAIS);
@@ -90,10 +90,10 @@ void Driver::selfTest()
 
     waitForDataReady();
 
-    XYZ_Data data = this->readData();
+    HMC5883L_Data data = this->readData();
 }
 
-void Driver::setMeasurmentMode(hmc5883lMeasurementMode_t mode)
+void HMC5883L::setMeasurmentMode(hmc5883lMeasurementMode_t mode)
 {
     uint8_t currentConfig = readDeivce(hm5883lRegisters_t::HMC5883L_REGISTER_CRA);
     uint8_t MEA_MASK = 0x3;
@@ -101,18 +101,18 @@ void Driver::setMeasurmentMode(hmc5883lMeasurementMode_t mode)
     writeDevice(hm5883lRegisters_t::HMC5883L_REGISTER_CRA, newConfig);
 }
 
-void Driver::writeDefaultConfig()
+void HMC5883L::writeDefaultConfig()
 {
     writeConfigA();
     setGain(hm5883lGain_t::HMC5883L_GAIN_4_7);
     setMode(hm5883lOperatingMode_t::HMC5883L_MODE_CONTINOUS, false);
 }
 
-void Driver::writeConfigA() {
+void HMC5883L::writeConfigA() {
     writeDevice(hm5883lRegisters_t::HMC5883L_REGISTER_CRA, m_configA.samples | m_configA.dateRate | m_configA.mode);
 }
 
-void Driver::writeDevice(hm5883lRegisters_t reg, int data)
+void HMC5883L::writeDevice(hm5883lRegisters_t reg, int data)
 {
     Wire.beginTransmission(HMC5883L_DEVICE_ADDRESS);
     Wire.send(reg);
@@ -122,7 +122,7 @@ void Driver::writeDevice(hm5883lRegisters_t reg, int data)
     Wire.endTransmission();
 }
 
-uint8_t Driver::readDeivce(hm5883lRegisters_t reg)
+uint8_t HMC5883L::readDeivce(hm5883lRegisters_t reg)
 {
     uint8_t data = 0;
     Wire.beginTransmission(HMC5883L_DEVICE_ADDRESS);
